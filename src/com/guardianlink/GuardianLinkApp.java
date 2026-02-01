@@ -1072,13 +1072,8 @@ public class GuardianLinkApp extends Application {
         Optional<Organization> result = dialog.showAndWait();
         if (result.isPresent()) {
             showAlert("Success", "Organization created successfully!");
-            // Refresh the table
-            BorderPane dashboard = (BorderPane) mainContainer.getChildren().get(0);
-            StackPane contentArea = (StackPane) dashboard.getCenter();
-            VBox currentPage = (VBox) contentArea.getChildren().get(0);
-
-            // Reload organizations page
-            dashboard.setCenter(createManageOrganizationsPage());
+            // Refresh the table using switchAdminContent
+            switchAdminContent(createManageOrganizationsPage());
         }
     }
 
