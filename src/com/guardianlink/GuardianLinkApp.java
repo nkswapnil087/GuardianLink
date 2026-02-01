@@ -11,6 +11,7 @@ import com.guardianlink.service.*;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -34,12 +35,14 @@ public class GuardianLinkApp extends Application {
     private static final int WINDOW_WIDTH = 1280;
     private static final int WINDOW_HEIGHT = 800;
 
-    // Color scheme
-    private static final String PRIMARY_COLOR = "#2196F3";
-    private static final String SECONDARY_COLOR = "#4CAF50";
-    private static final String BACKGROUND_COLOR = "#F5F5F5";
-    private static final String SIDEBAR_COLOR = "#1976D2";
-    private static final String HEADER_COLOR = "#FFFFFF";
+    // Color scheme - Dark theme with bold gradients
+    private static final String PRIMARY_COLOR = "#00D4FF"; // Cyan
+    private static final String SECONDARY_COLOR = "#FF006E"; // Hot Pink
+    private static final String BACKGROUND_COLOR = "#0A0E27"; // Very Dark Blue
+    private static final String SIDEBAR_COLOR = "#1A1F3A"; // Dark Slate
+    private static final String HEADER_COLOR = "#0F1629"; // Deep Navy
+    private static final String ACCENT_PURPLE = "#9D4EDD"; // Bold Purple
+    private static final String ACCENT_MAGENTA = "#FF006E"; // Bold Magenta
 
     // Controllers and Services
     private AuthController authController;
@@ -88,7 +91,7 @@ public class GuardianLinkApp extends Application {
         VBox container = new VBox(30);
         container.setAlignment(Pos.CENTER);
         container.setStyle(
-                "-fx-background-color: linear-gradient(to bottom, " + SIDEBAR_COLOR + ", " + PRIMARY_COLOR + ");");
+                "-fx-background-color: linear-gradient(to bottom right, #0A0E27, #1A1F3A, #2D0B3D, #1A0033);");
 
         // Make container fill the entire window
         container.prefWidthProperty().bind(mainContainer.widthProperty());
@@ -102,7 +105,7 @@ public class GuardianLinkApp extends Application {
 
         Label subtitleLabel = new Label("NGO Child Welfare & Sponsorship Management System");
         subtitleLabel.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 24)); // Increased from 16
-        subtitleLabel.setTextFill(Color.web("#E3F2FD"));
+        subtitleLabel.setTextFill(Color.web("#00D4FF"));
 
         // Login form box
         VBox formContainer = new VBox(15);
@@ -110,11 +113,11 @@ public class GuardianLinkApp extends Application {
         formContainer.setAlignment(Pos.CENTER);
         formContainer.setPadding(new Insets(40));
         formContainer.setStyle(
-                "-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 5);");
+                "-fx-background-color: rgba(30, 35, 60, 0.95); -fx-border-color: #00D4FF; -fx-border-width: 2; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,212,255,0.3), 15, 0, 0, 8);");
 
         Label formTitle = new Label("Login to Your Account");
         formTitle.setFont(Font.font("Arial", FontWeight.BOLD, 28)); // Increased from 20
-        formTitle.setTextFill(Color.web("#333333"));
+        formTitle.setTextFill(Color.web("#00D4FF"));
 
         // Username field with label
         Label usernameLabel = createFieldLabel("Username:");
@@ -122,7 +125,7 @@ public class GuardianLinkApp extends Application {
         usernameField.setPromptText("Enter your username");
         usernameField.setPrefWidth(320);
         usernameField.setStyle(
-                "-fx-font-size: 14px; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-border-width: 1;");
+                "-fx-font-size: 14px; -fx-padding: 10; -fx-background-color: rgba(20, 25, 45, 0.9); -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #999999; -fx-border-color: #9D4EDD; -fx-border-width: 1; -fx-background-radius: 5;");
 
         // Password field with label
         Label passwordLabel = createFieldLabel("Password:");
@@ -130,7 +133,7 @@ public class GuardianLinkApp extends Application {
         passwordField.setPromptText("Enter your password");
         passwordField.setPrefWidth(320);
         passwordField.setStyle(
-                "-fx-font-size: 14px; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-border-width: 1;");
+                "-fx-font-size: 14px; -fx-padding: 10; -fx-background-color: rgba(20, 25, 45, 0.9); -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #999999; -fx-border-color: #9D4EDD; -fx-border-width: 1; -fx-background-radius: 5;");
 
         Label messageLabel = new Label();
         messageLabel.setTextFill(Color.RED);
@@ -140,8 +143,8 @@ public class GuardianLinkApp extends Application {
         Button loginButton = new Button("Login");
         loginButton.setPrefWidth(320);
         loginButton.setPrefHeight(45);
-        loginButton.setStyle("-fx-background-color: " + SECONDARY_COLOR
-                + "; -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 5;");
+        loginButton.setStyle(
+                "-fx-background-color: linear-gradient(to right, #FF006E, #9D4EDD); -fx-text-fill: white; -fx-font-size: 16px; -fx-font-weight: bold; -fx-background-radius: 5;");
 
         loginButton.setOnAction(e -> {
             String username = usernameField.getText();
@@ -301,8 +304,10 @@ public class GuardianLinkApp extends Application {
      */
     private Label createFieldLabel(String text) {
         Label label = new Label(text);
-        label.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 13));
-        label.setTextFill(Color.web("#555555"));
+        label.setFont(Font.font("Arial", FontWeight.BOLD, 18));
+        label.setTextFill(Color.web("#00D4FF"));
+        label.setPadding(new Insets(8, 0, 5, 0));
+        label.setStyle("-fx-text-fill: #00D4FF; -fx-font-weight: bold;");
         return label;
     }
 
@@ -314,7 +319,7 @@ public class GuardianLinkApp extends Application {
         container.setAlignment(Pos.CENTER);
         container.setPadding(new Insets(40));
         container.setStyle(
-                "-fx-background-color: linear-gradient(to bottom, " + SIDEBAR_COLOR + ", " + PRIMARY_COLOR + ");");
+                "-fx-background-color: linear-gradient(to bottom right, #0A0E27, #1A1F3A, #2D0B3D, #1A0033);");
 
         // Make container fill the entire window
         container.prefWidthProperty().bind(mainContainer.widthProperty());
@@ -328,7 +333,7 @@ public class GuardianLinkApp extends Application {
 
         Label pageSubtitle = new Label(role.getDisplayName());
         pageSubtitle.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 18));
-        pageSubtitle.setTextFill(Color.web("#E3F2FD"));
+        pageSubtitle.setTextFill(Color.web("#00D4FF"));
 
         // Form container (The white box)
         VBox formContainer = new VBox(12);
@@ -336,38 +341,38 @@ public class GuardianLinkApp extends Application {
         formContainer.setAlignment(Pos.TOP_CENTER);
         formContainer.setPadding(new Insets(40));
         formContainer.setStyle(
-                "-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 15, 0, 0, 5);");
+                "-fx-background-color: rgba(30, 35, 60, 0.95); -fx-border-color: #00D4FF; -fx-border-width: 2; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,212,255,0.3), 15, 0, 0, 8);");
 
         // Common fields with better styling
         TextField fullNameField = new TextField();
         fullNameField.setPromptText("Enter your full name");
         fullNameField.setPrefWidth(370);
         fullNameField.setStyle(
-                "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-border-width: 1;");
+                "-fx-font-size: 14px; -fx-padding: 12; -fx-background-color: rgba(20, 25, 45, 0.9); -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #999999; -fx-border-color: #9D4EDD; -fx-border-width: 1; -fx-background-radius: 5;");
 
         TextField usernameField = new TextField();
         usernameField.setPromptText("Choose a username");
         usernameField.setPrefWidth(370);
         usernameField.setStyle(
-                "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-border-width: 1;");
+                "-fx-font-size: 14px; -fx-padding: 12; -fx-background-color: rgba(20, 25, 45, 0.9); -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #999999; -fx-border-color: #9D4EDD; -fx-border-width: 1; -fx-background-radius: 5;");
 
         PasswordField passwordField = new PasswordField();
         passwordField.setPromptText("Create a password");
         passwordField.setPrefWidth(370);
         passwordField.setStyle(
-                "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-border-width: 1;");
+                "-fx-font-size: 14px; -fx-padding: 12; -fx-background-color: rgba(20, 25, 45, 0.9); -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #999999; -fx-border-color: #9D4EDD; -fx-border-width: 1; -fx-background-radius: 5;");
 
         PasswordField confirmPasswordField = new PasswordField();
         confirmPasswordField.setPromptText("Re-enter your password");
         confirmPasswordField.setPrefWidth(370);
         confirmPasswordField.setStyle(
-                "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-border-width: 1;");
+                "-fx-font-size: 14px; -fx-padding: 12; -fx-background-color: rgba(20, 25, 45, 0.9); -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #999999; -fx-border-color: #9D4EDD; -fx-border-width: 1; -fx-background-radius: 5;");
 
         TextField emailField = new TextField();
         emailField.setPromptText("Your email address");
         emailField.setPrefWidth(370);
         emailField.setStyle(
-                "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-border-width: 1;");
+                "-fx-font-size: 14px; -fx-padding: 12; -fx-background-color: rgba(20, 25, 45, 0.9); -fx-text-fill: #FFFFFF; -fx-prompt-text-fill: #999999; -fx-border-color: #9D4EDD; -fx-border-width: 1; -fx-background-radius: 5;");
 
         // Add common fields to form
         formContainer.getChildren().addAll(
@@ -381,7 +386,7 @@ public class GuardianLinkApp extends Application {
         TextField orgField = null;
         TextField specializationField = null;
         TextField certificationField = null;
-        TextField paymentMethodField = null;
+        ComboBox<String> paymentMethodField = null;
 
         switch (role) {
             case CAREGIVER:
@@ -401,11 +406,20 @@ public class GuardianLinkApp extends Application {
                 break;
 
             case DONOR:
-                paymentMethodField = new TextField();
-                paymentMethodField.setPromptText("e.g., Bank Transfer, Credit Card");
+                paymentMethodField = new ComboBox<>();
+                paymentMethodField.getItems().addAll(
+                        "Cash",
+                        "Visa",
+                        "Mastercard",
+                        "Bank Transfer",
+                        "Mobile Banking",
+                        "PayPal",
+                        "Check",
+                        "Wire Transfer");
+                paymentMethodField.setPromptText("Select a payment method");
                 paymentMethodField.setPrefWidth(370);
                 paymentMethodField.setStyle(
-                        "-fx-font-size: 14px; -fx-padding: 12; -fx-background-radius: 8; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-border-width: 1;");
+                        "-fx-font-size: 14px; -fx-padding: 8; -fx-background-radius: 8; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-border-width: 1;");
                 formContainer.getChildren().addAll(createFieldLabel("Preferred Payment Method:"), paymentMethodField);
                 break;
 
@@ -430,20 +444,19 @@ public class GuardianLinkApp extends Application {
         Button signupButton = new Button("CREATE ACCOUNT");
         signupButton.setPrefWidth(370);
         signupButton.setPrefHeight(50);
-        signupButton.setStyle("-fx-background-color: linear-gradient(to bottom, " + SECONDARY_COLOR + ", derive("
-                + SECONDARY_COLOR + ", -15%)); " +
+        signupButton.setStyle("-fx-background-color: linear-gradient(to right, #FF006E, #9D4EDD); " +
                 "-fx-text-fill: white; " +
                 "-fx-font-size: 15px; " +
                 "-fx-font-weight: 900; " +
                 "-fx-font-family: 'Arial Black', sans-serif; " +
                 "-fx-background-radius: 10; " +
-                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 8, 0, 0, 3);");
+                "-fx-effect: dropshadow(gaussian, rgba(0,212,255,0.2), 10, 0, 0, 5);");
 
         // Final references for lambda
         final TextField finalOrgField = orgField;
         final TextField finalSpecField = specializationField;
         final TextField finalCertField = certificationField;
-        final TextField finalPaymentField = paymentMethodField;
+        final ComboBox<String> finalPaymentField = paymentMethodField;
 
         signupButton.setOnAction(e -> {
             String fullName = fullNameField.getText();
@@ -479,8 +492,8 @@ public class GuardianLinkApp extends Application {
                     break;
                 case DONOR:
                     newUser = new Donor(userId, username, password, fullName, email);
-                    if (finalPaymentField != null && !finalPaymentField.getText().isEmpty()) {
-                        ((Donor) newUser).setPreferredPaymentMethod(finalPaymentField.getText());
+                    if (finalPaymentField != null && finalPaymentField.getValue() != null) {
+                        ((Donor) newUser).setPreferredPaymentMethod(finalPaymentField.getValue());
                     }
                     break;
                 case AUDITOR:
@@ -561,7 +574,7 @@ public class GuardianLinkApp extends Application {
      */
     private void showAdminDashboard(User admin) {
         BorderPane dashboardLayout = new BorderPane();
-        dashboardLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
+        dashboardLayout.setStyle("-fx-background-color: linear-gradient(to bottom, #0A0E27, #1A1F3A);");
 
         // Make dashboard fill the entire window
         dashboardLayout.prefWidthProperty().bind(mainContainer.widthProperty());
@@ -577,7 +590,7 @@ public class GuardianLinkApp extends Application {
 
         // Initial content
         StackPane contentArea = new StackPane();
-        contentArea.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
+        contentArea.setStyle("-fx-background-color: linear-gradient(to bottom, #0A0E27, #1A1F3A);");
         contentArea.getChildren().add(createAdminDashboardPage());
         dashboardLayout.setCenter(contentArea);
 
@@ -589,7 +602,7 @@ public class GuardianLinkApp extends Application {
         VBox sidebar = new VBox(8);
         sidebar.setPrefWidth(240);
         sidebar.setPadding(new Insets(25, 0, 25, 0));
-        sidebar.setStyle("-fx-background-color: linear-gradient(to bottom, #1565C0, #0D47A1);");
+        sidebar.setStyle("-fx-background-color: linear-gradient(to bottom, #1A1F3A, #2D0B3D);");
 
         Button dashboardBtn = createSidebarButton("DASHBOARD", "#42A5F5");
         Button childrenBtn = createSidebarButton("MANAGE CHILDREN", "#66BB6A");
@@ -621,9 +634,11 @@ public class GuardianLinkApp extends Application {
     private VBox createAdminDashboardPage() {
         VBox page = new VBox(30);
         page.setPadding(new Insets(40));
+        page.setStyle("-fx-background-color: linear-gradient(to bottom, #0A0E27, #1A1F3A);");
 
         Label pageTitle = new Label("Admin Dashboard");
         pageTitle.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        pageTitle.setTextFill(Color.web("#00D4FF"));
 
         // Statistics
         HBox statsContainer = new HBox(25);
@@ -1146,7 +1161,7 @@ public class GuardianLinkApp extends Application {
      */
     private void showDonorDashboard(Donor donor) {
         BorderPane dashboardLayout = new BorderPane();
-        dashboardLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
+        dashboardLayout.setStyle("-fx-background-color: linear-gradient(to bottom, #0A0E27, #1A1F3A);");
 
         // Make dashboard fill the entire window
         dashboardLayout.prefWidthProperty().bind(mainContainer.widthProperty());
@@ -1157,12 +1172,15 @@ public class GuardianLinkApp extends Application {
 
         VBox content = new VBox(30);
         content.setPadding(new Insets(40));
+        content.setStyle("-fx-background-color: linear-gradient(to bottom, #0A0E27, #1A1F3A);");
 
         Label title = new Label("Donor Dashboard");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 36)); // Increased from 28
+        title.setTextFill(Color.web("#00D4FF"));
 
         Label welcomeMsg = new Label("Welcome, " + donor.getFullName() + "!");
         welcomeMsg.setFont(Font.font("Arial", FontWeight.NORMAL, 24)); // Increased from 18
+        welcomeMsg.setTextFill(Color.web("#9D4EDD"));
 
         Label statsMsg = new Label("Total Donated: ৳ " + donor.getTotalDonated());
         statsMsg.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 22)); // Increased from 16
@@ -1180,7 +1198,7 @@ public class GuardianLinkApp extends Application {
      */
     private void showCaregiverDashboard(Caregiver caregiver) {
         BorderPane dashboardLayout = new BorderPane();
-        dashboardLayout.setStyle("-fx-background-color: " + BACKGROUND_COLOR + ";");
+        dashboardLayout.setStyle("-fx-background-color: linear-gradient(to bottom, #0A0E27, #1A1F3A);");
 
         // Make dashboard fill the entire window
         dashboardLayout.prefWidthProperty().bind(mainContainer.widthProperty());
@@ -1191,16 +1209,20 @@ public class GuardianLinkApp extends Application {
 
         VBox content = new VBox(30);
         content.setPadding(new Insets(40));
+        content.setStyle("-fx-background-color: linear-gradient(to bottom, #0A0E27, #1A1F3A);");
 
         Label title = new Label("Caregiver Dashboard");
         title.setFont(Font.font("Arial", FontWeight.BOLD, 36)); // Increased from 28
+        title.setTextFill(Color.web("#00D4FF"));
 
         Label welcomeMsg = new Label("Welcome, " + caregiver.getFullName() + "!");
         welcomeMsg.setFont(Font.font("Arial", FontWeight.NORMAL, 24)); // Increased from 18
+        welcomeMsg.setTextFill(Color.web("#9D4EDD"));
 
         Label orgMsg = new Label(
                 "Organization: " + organizationService.getOrganizationName(caregiver.getOrganizationId()));
         orgMsg.setFont(Font.font("Arial", FontWeight.NORMAL, 22)); // Increased from 16
+        orgMsg.setTextFill(Color.web("#9D4EDD"));
 
         content.getChildren().addAll(title, welcomeMsg, orgMsg);
 
@@ -1248,19 +1270,20 @@ public class GuardianLinkApp extends Application {
         header.setAlignment(Pos.CENTER_LEFT);
         header.setPadding(new Insets(0, 30, 0, 30));
         header.setStyle(
-                "-fx-background-color: " + HEADER_COLOR + "; -fx-border-color: #E0E0E0; -fx-border-width: 0 0 1 0;");
+                "-fx-background-color: linear-gradient(to right, #0F1629, #1A1F3A); -fx-border-color: #00D4FF; -fx-border-width: 0 0 2 0;");
 
         Label headerTitle = new Label("GuardianLink");
         headerTitle.setFont(Font.font("Arial", FontWeight.BOLD, 28)); // Increased from 20
-        headerTitle.setTextFill(Color.web(SIDEBAR_COLOR));
+        headerTitle.setTextFill(Color.web("#00D4FF"));
 
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Label roleIndicator = new Label("Logged in as: " + user.getRole().getDisplayName());
         roleIndicator.setFont(Font.font("Arial", FontWeight.SEMI_BOLD, 20)); // Increased from 14
+        roleIndicator.setTextFill(Color.web("#00D4FF"));
         roleIndicator.setStyle(
-                "-fx-background-color: " + BACKGROUND_COLOR + "; -fx-padding: 10 20; -fx-background-radius: 20;");
+                "-fx-background-color: rgba(255, 0, 110, 0.15); -fx-padding: 10 20; -fx-background-radius: 20; -fx-border-color: #FF006E; -fx-border-width: 1;");
 
         header.getChildren().addAll(headerTitle, spacer, roleIndicator);
         return header;
@@ -1270,7 +1293,7 @@ public class GuardianLinkApp extends Application {
         VBox sidebar = new VBox(8);
         sidebar.setPrefWidth(240);
         sidebar.setPadding(new Insets(25, 0, 25, 0));
-        sidebar.setStyle("-fx-background-color: linear-gradient(to bottom, #5E35B1, #4527A0);");
+        sidebar.setStyle("-fx-background-color: linear-gradient(to bottom, #1A1F3A, #2D0B3D);");
 
         Button dashboardBtn = createSidebarButton("DASHBOARD", "#9575CD");
         Button logoutBtn = createSidebarButton("LOGOUT", "#EF5350");
@@ -1297,12 +1320,11 @@ public class GuardianLinkApp extends Application {
         card.setAlignment(Pos.CENTER_LEFT);
 
         // Gradient background with accent color
-        card.setStyle("-fx-background-color: linear-gradient(to bottom right, white, " + color + "15); " +
-                "-fx-background-radius: 20; " +
-                "-fx-border-color: " + color + "30; " +
-                "-fx-border-width: 2; " +
-                "-fx-border-radius: 20; " +
-                "-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 15, 0, 0, 5);");
+        card.setStyle("-fx-background-color: linear-gradient(135deg, rgba(0,212,255,0.1), rgba(255,0,110,0.1)); " +
+                "-fx-border-color: #00D4FF; " +
+                "-fx-border-width: 1.5; " +
+                "-fx-background-radius: 10; " +
+                "-fx-effect: dropshadow(gaussian, rgba(0,212,255,0.2), 15, 0, 0, 5);");
 
         Label valueLabel = new Label(value);
         valueLabel.setFont(Font.font("Arial Black", FontWeight.BOLD, 40));
@@ -1311,7 +1333,7 @@ public class GuardianLinkApp extends Application {
 
         Label titleLabel = new Label(title.toUpperCase());
         titleLabel.setFont(Font.font("Arial", FontWeight.BOLD, 13));
-        titleLabel.setTextFill(Color.web("#555555"));
+        titleLabel.setTextFill(Color.web("#9D4EDD"));
 
         // Color bar accent
         Region colorBar = new Region();
