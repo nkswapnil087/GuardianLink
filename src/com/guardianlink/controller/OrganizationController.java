@@ -67,20 +67,22 @@ public class OrganizationController {
     /**
      * Assign organization admin to an organization - Only System Admin
      */
-    public OrganizationAdmin assignOrgAdmin(User user, String userId, String username, String password, 
-                                             String fullName, String email, String organizationId) {
+    public OrganizationAdmin assignOrgAdmin(User user, String userId, String username, String password,
+            String fullName, String email, String organizationId) {
         if (!(user instanceof SystemAdmin)) {
             throw new IllegalArgumentException("Only System Admins can assign organization admins");
         }
-        
+
         // Create new OrganizationAdmin user
         OrganizationAdmin orgAdmin = new OrganizationAdmin(userId, username, password, fullName, email, organizationId);
         userService.registerUser(orgAdmin);
         return orgAdmin;
     }
 
-/**
+    /**
      * Get organization admins for a specific organization
      */
     public List<OrganizationAdmin> getOrgAdminsForOrganization(String organizationId) {
         return userService.getOrgAdminsByOrganization(organizationId);
+    }
+}
