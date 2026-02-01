@@ -1,6 +1,7 @@
 package com.guardianlink;
 
 import com.guardianlink.controller.AuthController;
+import com.guardianlink.controller.OrganizationController;
 import com.guardianlink.model.entity.Child;
 import com.guardianlink.model.entity.Donation;
 import com.guardianlink.model.entity.Organization;
@@ -42,6 +43,7 @@ public class GuardianLinkApp extends Application {
 
     // Controllers and Services
     private AuthController authController;
+    private OrganizationController organizationController;
     private ChildService childService;
     private DonationService donationService;
     private OrganizationService organizationService;
@@ -73,6 +75,7 @@ public class GuardianLinkApp extends Application {
 
     private void initializeServices() {
         authController = AuthController.getInstance();
+        organizationController = OrganizationController.getInstance();
         childService = ChildService.getInstance();
         donationService = DonationService.getInstance();
         organizationService = OrganizationService.getInstance();
@@ -601,7 +604,17 @@ public class GuardianLinkApp extends Application {
             showLoginScreen();
         });
 
-        sidebar.getChildren().addAll(dashboardBtn, childrenBtn, donationsBtn, logoutBtn);
+        sidebar.getChildren().addAll(dashboardBtn, childrenBtn, donationsBtn);
+
+        // Only System Admin can manage organizations
+        User currentUser = authController.getCurrentUser();
+        if (currentUser instanceof SystemAdmin) {
+            Button organizationBtn = createSidebarButton("MANAGE ORGANIZATIONS", "#AB47BC");
+            organizationBtn.setOnAction(e -> switchAdminContent(createManageOrganizationsPage()));
+            sidebar.getChildren().add(organizationBtn);
+        }
+
+        sidebar.getChildren().add(logoutBtn);
         return sidebar;
     }
 
@@ -631,6 +644,8 @@ public class GuardianLinkApp extends Application {
 
     /**
      * MANAGE CHILDREN PAGE - Add/Edit/Delete Children
+     * SystemAdmin can manage all children, OrganizationAdmin can manage only their
+     * organization's children
      */
     private VBox createManageChildrenPage() {
         VBox page = new VBox(20);
@@ -714,7 +729,17 @@ public class GuardianLinkApp extends Application {
         });
 
         table.getColumns().addAll(idCol, nameCol, ageCol, genderCol, orgCol, statusCol, actionCol);
-        table.getItems().addAll(childService.getAllChildren());
+
+        // Load children based on user role
+        User currentUser = authController.getCurrentUser();
+        if (currentUser instanceof SystemAdmin) {
+            // System Admin sees all children
+            table.getItems().addAll(childService.getAllChildren());
+        } else if (currentUser instanceof OrganizationAdmin) {
+            // Organization Admin sees only their organization's children
+            OrganizationAdmin orgAdmin = (OrganizationAdmin) currentUser;
+            table.getItems().addAll(childService.getChildrenByOrganization(orgAdmin.getOrganizationId()));
+        }
 
         page.getChildren().addAll(pageTitle, addChildBtn, table);
         return page;
@@ -887,6 +912,238 @@ public class GuardianLinkApp extends Application {
 
         page.getChildren().addAll(pageTitle, table);
         return page;
+    }
+
+    /**
+     * MANAGE ORGANIZATIONS PAGE - Add/Edit/Delete Organizations (System Admin Only)
+     */
+    private VBox createManageOrganizationsPage() {
+        VBox page = new VBox(20);
+        page.setPadding(new Insets(40));
+
+        Label pageTitle = new Label("Manage Organizations");
+        pageTitle.setFont(Font.font("Arial", FontWeight.BOLD, 36));
+        pageTitle.setTextFill(Color.WHITE);
+        pageTitle.setStyle("-fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 10, 0, 0, 3);");
+
+        // Add Organization Button
+        Button addOrgBtn = new Button("+ Add New Organization");
+        addOrgBtn.setStyle("-fx-background-color: #AB47BC"
+                + "; -fx-text-fill: white; -fx-font-size: 14px; -fx-padding: 10 20;");
+        addOrgBtn.setOnAction(e -> showAddOrganizationDialog());
+
+        // Organizations Table
+        TableView<Organization> table = new TableView<>();
+        table.setStyle("-fx-background-color: white;");
+        table.setPrefHeight(500);
+
+        TableColumn<Organization, String> idCol = new TableColumn<>("ID");
+        idCol.setCellValueFactory(new PropertyValueFactory<>("organizationId"));
+        idCol.setPrefWidth(100);
+
+        TableColumn<Organization, String> nameCol = new TableColumn<>("Name");
+        nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+        nameCol.setPrefWidth(200);
+
+        TableColumn<Organization, String> addressCol = new TableColumn<>("Address");
+        addressCol.setCellValueFactory(new PropertyValueFactory<>("address"));
+        addressCol.setPrefWidth(220);
+
+        TableColumn<Organization, String> phoneCol = new TableColumn<>("Phone");
+        phoneCol.setCellValueFactory(new PropertyValueFactory<>("phone"));
+        phoneCol.setPrefWidth(130);
+
+        TableColumn<Organization, String> emailCol = new TableColumn<>("Email");
+        emailCol.setCellValueFactory(new PropertyValueFactory<>("email"));
+        emailCol.setPrefWidth(150);
+
+        TableColumn<Organization, Void> actionCol = new TableColumn<>("Actions");
+        actionCol.setPrefWidth(220);
+        actionCol.setCellFactory(param -> new TableCell<>() {
+            private final Button assignBtn = new Button("Assign Admin");
+            private final Button deleteBtn = new Button("Delete");
+            private final HBox box = new HBox(10, assignBtn, deleteBtn);
+
+            {
+                assignBtn.setStyle("-fx-background-color: #0288D1; -fx-text-fill: white;");
+                deleteBtn.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
+
+                assignBtn.setOnAction(e -> {
+                    Organization org = getTableView().getItems().get(getIndex());
+                    showAssignOrgAdminDialog(org);
+                });
+
+                deleteBtn.setOnAction(e -> {
+                    Organization org = getTableView().getItems().get(getIndex());
+                    Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirm.setTitle("Confirm Delete");
+                    confirm.setHeaderText("Delete " + org.getName() + "?");
+                    confirm.setContentText("This action cannot be undone.");
+                    Optional<ButtonType> result = confirm.showAndWait();
+                    if (result.isPresent() && result.get() == ButtonType.OK) {
+                        organizationController.deleteOrganization(authController.getCurrentUser(),
+                                org.getOrganizationId());
+                        table.refresh();
+                        loadOrganizations(table);
+                        showAlert("Success", "Organization deleted successfully!");
+                    }
+                });
+
+                this.setStyle("-fx-alignment: CENTER;");
+                this.setGraphic(box);
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(box);
+                }
+            }
+        });
+
+        table.getColumns().addAll(idCol, nameCol, addressCol, phoneCol, emailCol, actionCol);
+
+        // Load organizations
+        loadOrganizations(table);
+
+        page.getChildren().addAll(pageTitle, addOrgBtn, table);
+        return page;
+    }
+
+    private void loadOrganizations(TableView<Organization> table) {
+        table.getItems().clear();
+        List<Organization> organizations = organizationController.getAllOrganizations();
+        table.getItems().addAll(organizations);
+    }
+
+    private void showAddOrganizationDialog() {
+        Dialog<Organization> dialog = new Dialog<>();
+        dialog.setTitle("Add New Organization");
+        dialog.setHeaderText("Create a New Organization");
+
+        ButtonType saveButtonType = new ButtonType("Create", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20));
+
+        TextField nameField = new TextField();
+        nameField.setPromptText("Organization Name");
+        TextField addressField = new TextField();
+        addressField.setPromptText("Address");
+        TextField phoneField = new TextField();
+        phoneField.setPromptText("Phone Number");
+        TextField emailField = new TextField();
+        emailField.setPromptText("Email Address");
+
+        grid.add(new Label("Name:"), 0, 0);
+        grid.add(nameField, 1, 0);
+        grid.add(new Label("Address:"), 0, 1);
+        grid.add(addressField, 1, 1);
+        grid.add(new Label("Phone:"), 0, 2);
+        grid.add(phoneField, 1, 2);
+        grid.add(new Label("Email:"), 0, 3);
+        grid.add(emailField, 1, 3);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == saveButtonType) {
+                if (nameField.getText().isEmpty() || addressField.getText().isEmpty() ||
+                        phoneField.getText().isEmpty() || emailField.getText().isEmpty()) {
+                    showAlert("Validation Error", "All fields are required!");
+                    return null;
+                }
+                return organizationController.addOrganization(
+                        authController.getCurrentUser(),
+                        nameField.getText(),
+                        addressField.getText(),
+                        phoneField.getText(),
+                        emailField.getText());
+            }
+            return null;
+        });
+
+        Optional<Organization> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            showAlert("Success", "Organization created successfully!");
+            // Refresh the table
+            BorderPane dashboard = (BorderPane) mainContainer.getChildren().get(0);
+            StackPane contentArea = (StackPane) dashboard.getCenter();
+            VBox currentPage = (VBox) contentArea.getChildren().get(0);
+
+            // Reload organizations page
+            dashboard.setCenter(createManageOrganizationsPage());
+        }
+    }
+
+    /**
+     * Dialog to assign organization admin to an organization
+     */
+    private void showAssignOrgAdminDialog(Organization organization) {
+        Dialog<OrganizationAdmin> dialog = new Dialog<>();
+        dialog.setTitle("Assign Organization Admin");
+        dialog.setHeaderText("Create and assign a new Organization Admin to: " + organization.getName());
+
+        ButtonType assignButtonType = new ButtonType("Assign", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(assignButtonType, ButtonType.CANCEL);
+
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20));
+
+        TextField usernameField = new TextField();
+        usernameField.setPromptText("Username");
+        PasswordField passwordField = new PasswordField();
+        passwordField.setPromptText("Password");
+        TextField fullNameField = new TextField();
+        fullNameField.setPromptText("Full Name");
+        TextField emailField = new TextField();
+        emailField.setPromptText("Email Address");
+
+        grid.add(new Label("Username:"), 0, 0);
+        grid.add(usernameField, 1, 0);
+        grid.add(new Label("Password:"), 0, 1);
+        grid.add(passwordField, 1, 1);
+        grid.add(new Label("Full Name:"), 0, 2);
+        grid.add(fullNameField, 1, 2);
+        grid.add(new Label("Email:"), 0, 3);
+        grid.add(emailField, 1, 3);
+
+        dialog.getDialogPane().setContent(grid);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == assignButtonType) {
+                if (usernameField.getText().isEmpty() || passwordField.getText().isEmpty() ||
+                        fullNameField.getText().isEmpty() || emailField.getText().isEmpty()) {
+                    showAlert("Validation Error", "All fields are required!");
+                    return null;
+                }
+                String userId = "USR" + System.currentTimeMillis();
+                return organizationController.assignOrgAdmin(
+                        authController.getCurrentUser(),
+                        userId,
+                        usernameField.getText(),
+                        passwordField.getText(),
+                        fullNameField.getText(),
+                        emailField.getText(),
+                        organization.getOrganizationId());
+            }
+            return null;
+        });
+
+        Optional<OrganizationAdmin> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            showAlert("Success", "Organization Admin assigned successfully!\n" +
+                    "Admin: " + result.get().getFullName() + "\n" +
+                    "Organization: " + organization.getName());
+        }
     }
 
     /**

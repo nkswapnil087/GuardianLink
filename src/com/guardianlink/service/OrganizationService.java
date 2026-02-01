@@ -12,35 +12,38 @@ import java.util.Optional;
 public class OrganizationService {
     private static OrganizationService instance;
     private List<Organization> organizations;
-    
+
     private OrganizationService() {
         organizations = new ArrayList<>();
         initializeSampleData();
     }
-    
+
     public static OrganizationService getInstance() {
         if (instance == null) {
             instance = new OrganizationService();
         }
         return instance;
     }
-    
+
     /**
      * Initialize with sample organizations
      */
     private void initializeSampleData() {
-        organizations.add(new Organization("ORG001", "Hope Foundation", "123 Main St, Dhaka", "01712345678", "info@hope.org"));
-        organizations.add(new Organization("ORG002", "Children's Care BD", "456 Park Ave, Chittagong", "01798765432", "contact@childrencare.org"));
-        organizations.add(new Organization("ORG003", "Future Leaders", "789 School Rd, Sylhet", "01611223344", "support@futureleaders.org"));
+        organizations.add(
+                new Organization("ORG001", "Hope Foundation", "123 Main St, Dhaka", "01712345678", "info@hope.org"));
+        organizations.add(new Organization("ORG002", "Children's Care BD", "456 Park Ave, Chittagong", "01798765432",
+                "contact@childrencare.org"));
+        organizations.add(new Organization("ORG003", "Future Leaders", "789 School Rd, Sylhet", "01611223344",
+                "support@futureleaders.org"));
     }
-    
+
     /**
      * Get all organizations
      */
     public List<Organization> getAllOrganizations() {
         return new ArrayList<>(organizations);
     }
-    
+
     /**
      * Get organization by ID
      */
@@ -50,12 +53,42 @@ public class OrganizationService {
                 .findFirst();
         return org.orElse(null);
     }
-    
+
     /**
      * Get organization name by ID
      */
     public String getOrganizationName(String organizationId) {
         Organization org = getOrganizationById(organizationId);
         return org != null ? org.getName() : "Unknown Organization";
+    }
+
+    /**
+     * Add new organization
+     */
+    public Organization addOrganization(String name, String address, String phone, String email) {
+        String newOrgId = generateNextOrgId();
+        Organization org = new Organization(newOrgId, name, address, phone, email);
+        organizations.add(org);
+        return org;
+    }
+
+    /**
+     * Generate next organization ID
+     */
+    private String generateNextOrgId() {
+        int maxNumber = organizations.stream()
+                .map(org -> org.getOrganizationId().replaceAll("[^0-9]", ""))
+                .filter(s -> !s.isEmpty())
+                .map(Integer::parseInt)
+                .max(Integer::compareTo)
+                .orElse(0);
+        return "ORG" + String.format("%03d", maxNumber + 1);
+    }
+
+    /**
+     * Delete organization by ID
+     */
+    public boolean deleteOrganization(String organizationId) {
+        return organizations.removeIf(org -> org.getOrganizationId().equals(organizationId));
     }
 }

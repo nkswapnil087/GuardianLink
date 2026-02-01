@@ -1,12 +1,14 @@
 package com.guardianlink.service;
 
 import com.guardianlink.model.user.User;
+import com.guardianlink.model.user.OrganizationAdmin;
 import com.guardianlink.repository.UserRepository;
 import com.guardianlink.exception.UserNotFoundException;
 import com.guardianlink.util.PasswordUtil;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Service layer for User-related business logic
@@ -14,18 +16,18 @@ import java.util.Optional;
 public class UserService {
     private static UserService instance;
     private UserRepository userRepository;
-    
+
     private UserService() {
         userRepository = UserRepository.getInstance();
     }
-    
+
     public static UserService getInstance() {
         if (instance == null) {
             instance = new UserService();
         }
         return instance;
     }
-    
+
     /**
      * Authenticate user with username and password
      */
@@ -36,7 +38,7 @@ public class UserService {
         }
         throw new UserNotFoundException("Invalid username or password");
     }
-    
+
     /**
      * Register new user
      */
@@ -45,7 +47,7 @@ public class UserService {
         userRepository.save(user);
         return user;
     }
-    
+
     /**
      * Get user by ID
      */
@@ -53,25 +55,36 @@ public class UserService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
     }
-    
+
     /**
      * Get all users
      */
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
-    
+
     /**
      * Delete user
      */
     public boolean deleteUser(String userId) {
         return userRepository.delete(userId);
     }
-    
+
     /**
      * Generate next user ID
      */
     public String generateNextUserId() {
         return userRepository.generateNextId();
+    }
+
+    /**
+     * Get organization admins by organization ID
+     */
+    public List<OrganizationAdmin> getOrgAdminsByOrganization(String organizationId) {
+        return userRepository.findAll().stream()
+                .filter(user -> user instanceof OrganizationAdmin)
+                .map(user -> (OrganizationAdmin) user)
+                .filter(admin -> admin.getOrganizationId().equals(organizationId))
+                .collect(Collectors.toList());
     }
 }
