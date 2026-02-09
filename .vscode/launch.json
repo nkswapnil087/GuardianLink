@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "GuardianLink App",
+      "type": "java",
+      "name": "Launch GuardianLink",
+      "request": "launch",
+      "mainClass": "com.guardianlink.GuardianLinkApp",
+      "projectName": "Java_Project_Final_01",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "vmArgs": "--module-path C:\\Program Files\\Java\\javafx\\javafx-sdk\\lib --add-modules javafx.controls,javafx.fxml"
+    }
+  ]
+}

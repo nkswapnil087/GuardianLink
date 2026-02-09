@@ -1,0 +1,48 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Compile Java (with JavaFX)",
+      "type": "shell",
+      "command": "javac",
+      "args": [
+        "-d",
+        "out/production/Java_Project_Final_01",
+        "-cp",
+        "C:\\Program Files\\Java\\javafx\\javafx-sdk\\lib\\*",
+        "-sourcepath",
+        "src",
+        "src/com/guardianlink/GuardianLinkApp.java"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Run GuardianLink",
+      "type": "shell",
+      "command": "java",
+      "args": [
+        "--module-path",
+        "C:\\Program Files\\Java\\javafx\\javafx-sdk\\lib",
+        "--add-modules",
+        "javafx.controls,javafx.fxml",
+        "-cp",
+        "out/production/Java_Project_Final_01",
+        "com.guardianlink.GuardianLinkApp"
+      ],
+      "dependsOn": [
+        "Compile Java (with JavaFX)"
+      ],
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always"
+      }
+    }
+  ]
+}

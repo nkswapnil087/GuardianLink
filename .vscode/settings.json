@@ -1,0 +1,13 @@
+{
+  "java.project.sourcePaths": ["src"],
+  "java.project.outputPath": "out/production/Java_Project_Final_01",
+  "java.project.referencedLibraries": [
+    "C:\\Program Files\\Java\\javafx\\javafx-sdk\\lib\\*.jar"
+  ],
+  "java.compile.nullAnalysis.mode": "automatic",
+  "[java]": {
+    "editor.defaultFormatter": "redhat.java",
+    "editor.formatOnSave": true
+  },
+  "java.debug.settings.hotCodeReplace": "auto"
+}

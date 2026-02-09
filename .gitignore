@@ -1,0 +1,12 @@
+# Maven build output
+/target/
+
+# IntelliJ IDEA project files
+/.idea/
+*.iml
+
+# VS Code settings
+/.vscode/
+
+# Java compiled classes (if not already tracked)
+/out/
